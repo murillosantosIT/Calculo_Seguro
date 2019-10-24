@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cálculo de seguros</title>
+    <!--manipular no local storage-->
+    <script src="js/localstorage.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+<body onload="listar()">
+    <div class="container">
+        <h2>Cálculos de seguros:</h2>
+        <!-- Botão para acionar modal -->
+        <button id="btnNovoCalculo" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal"
+            onclick="alteraBotao()">Novo Cálculo</button>
+        <!-- Modal novo calculo -->
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Entre com as informações abaixo:</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form action="calcula.php" id="formCalc" name="formCalc" method="POST">
+                                <label>ID: </label>
+                                <input type="number" class="form-control" id="id" name="id">
+                                <br>
+                                <label>Nome: </label>
+                                <input type="text" class="form-control" id="nome" name="nome">
+                                <br>
+                                <label>Sexo: </label>
+                                <select class="form-control" id="sexo" name="sexo">
+                                    <option value="">-----</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Feminino</option>
+                                </select>
+                                <br>
+                                <label>Data de nascimento: </label>
+                                <input type="date" class="form-control" id="dtNascimento" name="dtNascimento">
+                                <br>
+                                <label>Valor do veículo: </label>
+                                <input type="number" class="form-control" id="vlVeiculo" name="vlVeiculo">
+                                <br>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnGuardar" type="button" class="btn btn-success float-right"
+                            onclick="guardar()">Calcular e guardar</button>
+                        <button id="btnModificar" style="display:none" type="button" class="btn btn-warning float-right"
+                            onclick="modificar()">Modificar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Botão para acionar modal -->
+        <button id="btnListar" type="button" class="btn btn-primary" data-toggle="modal"
+            data-target="#modalListar">Listar Cálculo por ID</button>
+        <!-- Modal listar por id -->
+        <div class="modal fade" id="modalListar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Entre com o ID para buscar:</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="formBusca" name="formCalc">
+                                <label>ID: </label>
+                                <input type="number" class="form-control" id="idBusca" name="idBusca">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnBuscar" type="button" class="btn btn-success float-right"
+                            onclick="listarPorID()">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Listar todos novamente -->
+        <button id="btnListarTodos" type="button" class="btn btn-primary" onclick="listar()">Listar todos os
+            Cálculos</button>
+        <input type="hidden" id="txtId">
+        <br>
+        <br>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome do condutor</th>
+                        <th>Sexo</th>
+                        <th>Data de nascimento</th>
+                        <th>Valor do veiculo</th>
+                        <th>Valor do seguro</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tblDados">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script src="js/localstorage.js"></script> -->
+
+    <!-- JavaScript -->
+    <!-- jQuery primeiro, depois Popper.js, depois Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+    <!-- Validações -->
+    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/additional-methods.min.js"></script>
+    <script type="text/javascript" src="js/localization/messages_pt_BR.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#formCalc').validate({
+                rules: {
+                    id: {
+                        required: true,
+                        maxlength: 10,
+                        integer: true
+                    },
+                    nome: {
+                        required: true,
+                        maxlength: 50,
+                        letterswithbasicpunc: true,
+                        maiorDeIdade: true
+                    },
+                    sexo: {
+                        required: true,
+                        maxlength: 1
+                    },
+                    dtNascimento: {
+                        required: true,
+                        maxlength: 10
+                    },
+                    vlVeiculo: {
+                        required: true,
+                        number: true,
+                        maxlength: 10
+                    }
+                }
+            });
+            $('#formBusca').validate({
+                rules: {
+                    id: {
+                        required: true,
+                        maxlength: 10,
+                        integer: true
+                    }
+                }
+            });
+        });  
+    </script>
+</body>
+
+</html>
